@@ -2,7 +2,7 @@ services:
   mail:
     build: ./docker/mail
     container_name: lamp_mail
-    hostname: mail.local
+    hostname: mail.labo.tld
     ports:
       - "1025:25"
       - "143:143"
@@ -20,6 +20,7 @@ services:
       ROUNDCUBEMAIL_DEFAULT_PORT: 143
       ROUNDCUBEMAIL_SMTP_PORT: 25
       ROUNDCUBEMAIL_LOG_DRIVER: stdout
+      ROUNDCUBEMAIL_USERNAME_DOMAIN: labo.tld
     ports:
       - "8082:80"
     volumes:

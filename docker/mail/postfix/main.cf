@@ -1,17 +1,29 @@
 myhostname = mail.labo.tld
+myorigin = mail.labo.tld
 mydomain   = labo.tld
+mydestination = localhost.com, localhost
 inet_interfaces = all
 inet_protocols  = ipv4
 
-# ➊ On passe en mode "virtual mailbox"
-virtual_mailbox_domains = $mydomain
+# On passe en mode "virtual mailbox"
+virtual_mailbox_domains = labo.tld
+virtual_mailbox_domains_debug=yes
 virtual_mailbox_base    = /var/mail/virtmail
-virtual_mailbox_maps    = hash:/etc/postfix/vmailbox
+virtual_mailbox_maps = lmdb:/etc/postfix/vmailbox
+
+
 virtual_uid_maps        = static:5000
 virtual_gid_maps        = static:5000
 
-# ➋ Livraison par LMTP vers Dovecot
-virtual_transport = lmtp:unix:private/dovecot-lmtp
+# Livraison par LMTP vers Dovecot
+virtual_transport = dovecot
+
+transport_maps = lmdb:/etc/postfix/transport
 
 # (on supprime/ commente home_mailbox = Maildir/)
 smtpd_banner = $myhostname ESMTP
+
+
+maillog_file = /var/log/mail.log
+debug_peer_level = 3
+debug_peer_list = 127.0.0.1
