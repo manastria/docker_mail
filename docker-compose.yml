@@ -28,5 +28,4 @@ services:
       - mail
 
 volumes:
-  db_data:
   mail_data:
