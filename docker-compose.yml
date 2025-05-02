@@ -1,0 +1,32 @@
+services:
+  mail:
+    build: ./docker/mail
+    container_name: lamp_mail
+    hostname: mail.local
+    ports:
+      - "1025:25"
+      - "143:143"
+    volumes:
+      - mail_data:/var/mail
+      - ./docker/mail/dovecot/dovecot.conf:/etc/dovecot/dovecot.conf
+      - ./docker/mail/postfix/main.cf:/etc/postfix/main.cf
+
+  webmail:
+    image: roundcube/roundcubemail
+    container_name: lamp_webmail
+    environment:
+      ROUNDCUBEMAIL_DEFAULT_HOST: lamp_mail
+      ROUNDCUBEMAIL_SMTP_SERVER: lamp_mail
+      ROUNDCUBEMAIL_DEFAULT_PORT: 143
+      ROUNDCUBEMAIL_SMTP_PORT: 25
+      ROUNDCUBEMAIL_LOG_DRIVER: stdout
+    ports:
+      - "8082:80"
+    volumes:
+      - ./docker/webmail/config.inc.php:/config.docker.inc.php
+    depends_on:
+      - mail
+
+volumes:
+  db_data:
+  mail_data:
