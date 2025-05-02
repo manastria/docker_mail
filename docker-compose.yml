@@ -1,0 +1,31 @@
+# docker-compose.yml minimal
+services:
+  mail:
+    build: ./mail
+    container_name: labomail
+    hostname: mail.labo.tld
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./mail/postfix/postfix:/tmp/etc/postfix
+      - ./mail/dovecot/dovecot:/tmp/etc/dovecot
+      - maildata:/var/mail
+    ports:
+      - "1025:25"
+      - "143:143"
+  webmail:
+    image: roundcube/roundcubemail
+    container_name: lamp_webmail
+    environment:
+      ROUNDCUBEMAIL_DEFAULT_HOST: labomail
+      ROUNDCUBEMAIL_SMTP_SERVER: labomail
+      ROUNDCUBEMAIL_DEFAULT_PORT: 143
+      ROUNDCUBEMAIL_SMTP_PORT: 25
+      ROUNDCUBEMAIL_LOG_DRIVER: stdout
+      ROUNDCUBEMAIL_USERNAME_DOMAIN: labo.tld
+    ports:
+      - "80:80"
+    depends_on:
+      - mail
+volumes:
+  maildata:

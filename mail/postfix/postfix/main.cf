@@ -1,0 +1,46 @@
+# Identité du serveur
+myhostname = mail.labo.tld
+myorigin = $myhostname
+mydomain = labo.tld
+
+# Acceptation des mails uniquement pour les domaines virtuels
+mydestination = localhost.localdomain, localhost
+
+# Interfaces réseau écoutées (utile si docker expose sur 0.0.0.0)
+inet_interfaces = all
+inet_protocols = ipv4
+
+# Fichiers de log
+maillog_file = /dev/stdout
+
+# Bannière SMTP
+smtpd_banner = $myhostname ESMTP (labo/test)
+
+# Niveau de débogage (inutilement verbeux si non utilisé)
+# debug_peer_level = 3
+# debug_peer_list = 127.0.0.1
+
+# ------------------------------------------------------------
+# Configuration boîte aux lettres virtuelle
+# ------------------------------------------------------------
+
+virtual_mailbox_domains = labo.tld
+virtual_mailbox_base = /var/mail/vmail
+virtual_mailbox_maps = lmdb:/etc/postfix/vmailbox
+
+# Transport de livraison → vers Dovecot en LMTP
+virtual_transport = lmtp:unix:private/dovecot-lmtp
+
+# UID/GID statiques pour l’écriture dans les boîtes
+virtual_uid_maps = static:101
+virtual_gid_maps = static:101
+
+# Table de routage personnalisée si besoin (ex: route vers un autre serveur)
+transport_maps = lmdb:/etc/postfix/transport
+
+# ------------------------------------------------------------
+# Restrictions SMTP basiques (même en labo, éviter l'open relay)
+# ------------------------------------------------------------
+smtpd_recipient_restrictions =
+    permit_mynetworks,
+    reject_unauth_destination
